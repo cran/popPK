@@ -1,6 +1,7 @@
   require(Hmisc)
   require(lattice)
   require(grid)
+  require(xpose4)
 
   xpdb <- NULL
 
@@ -24,7 +25,7 @@ popPK <- function(info){
 #======================================================================================================================================#
 
 printGraph <- function(name,device,height=7,width=7){
-	if(device=="pdf") pdf(file=paste(name,".pdf",sep=""),height=height,width=width)
+	if(device=="pdf") pdf(file=paste(name,".pdf",sep=""),height=height,width=width,onefile=FALSE)
 	if(device=="wmf") win.metafile(file=paste(name,".wmf",sep=""),height=height,width=width)
 	if(device=="bmp") tiff(filename=paste(name,".bmp",sep=""),width=480/7*width,height=480/7*height)
 	if(device=="tiff") tiff(filename=paste(name,".tif",sep=""),width=480/7*width,height=480/7*height)
@@ -241,15 +242,6 @@ xposeData <- function(info){
 	opath <- getwd()
 	setwd(info$path)
 
-	if(length(grep("xpose4",row.names(installed.packages())))>0){
-			require(xpose4)
-		}else{
-			cat("\nYou need to install the 'xpose4' package (xpose4.sourceforge.net)\n")
-			cat("The script will terminate now")
-			stop()
-		}
-
-
 	if(is.null(info$suffix)){
 		info$suffix <- ".csv"
 	}
@@ -315,6 +307,7 @@ xposeData <- function(info){
 	assign("xpdb",xpdb,envir=.GlobalEnv)
 
 	if(!is.na(info$output)){
+		dir.create(info$output,showWarnings=FALSE)
 		setwd(info$output)
 	}else{
 		setwd(opath)
@@ -476,38 +469,44 @@ Demographics <-function(info){
 			dev.off()
 
 			printGraph("CovHist%02d",info$device)
-			cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
-				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,,scales=list(cex=1))
+			print(cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
+				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
+			)
 			dev.off()
 
 			printGraph("CatHist",info$device)
-			cov.hist(xpdbcat,max.plots.per.page=length(xpdbcat@Prefs@Xvardef$covariates),
+			print(cov.hist(xpdbcat,max.plots.per.page=length(xpdbcat@Prefs@Xvardef$covariates),
 				main=NULL,hicol="lightgrey",varname.cex=0.7,axis.text.cex=0.7)
+			)
 			dev.off()
 
 			printGraph("CatHist%02d",info$device)
-			cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
+			print(cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
 				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
+			)
 			dev.off()
 		}	
 	}else{
 		if(length(xpdbcon@Prefs@Xvardef$covariates)>1){
 			if(info$smooth){
-				pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
+				print(pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
 					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates]))
+				)
 			}else{
-				pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
+				print(pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
 					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates]))
+				)
 			} 
 
 
-			cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
+			print(cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
 				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
-
-			cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
+			)
+			print(cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
 				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
+			)
 		}
 	}
 
@@ -647,7 +646,7 @@ Diagnostics <- function(info){
 	if(info$ind.plots==TRUE){
 		if(!is.na(info$output)){
 			printGraph("ind.plots%02d",info$device)
-			ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
+			print(ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
 				xlb=list(paste("Time (",info$units$time,")",sep="")),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep="")),
 				par.strip.text=list(cex=1.5),
@@ -655,11 +654,11 @@ Diagnostics <- function(info){
 				key=list(x=0,y=1.15,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
 						text=list(c("Observations","Population predictions","Individual predictions"),cex=0.8),
 						line=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
-				scales=list(cex=1.5),	
-			)
+				scales=list(cex=1.5)	
+			))
 			dev.off() 
 		}else{
-			ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
+			print(ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
 				xlb=list(paste("Time (",info$units$time,")",sep="")),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep="")),
 				par.strip.text=list(cex=1.5),
@@ -667,29 +666,29 @@ Diagnostics <- function(info){
 				key=list(x=0,y=1.15,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
 						text=list(c("Observations","Population predictions","Individual predictions"),cex=0.8),
 						line=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
-				scales=list(cex=1.5),	
-			)
+				scales=list(cex=1.5)	
+			))
 		}
 	}
 
 	#Obs/Ipred/Pred vs. time plot
       if(!is.na(info$strat.by)){
-		plotConcTime <- dv.preds.vs.idv(xpdb,ids=NULL,by=info$strat.by,
+		plotConcTime <- dv.preds.vs.idv(xpdb,by=info$strat.by,
 				subset=paste(xpdb@Prefs@Xvardef$dv,"!=0",sep=""),
 				#aspect=1,
 				layout=c(3,length(unique(as.character(xpdb@Data[,info$strat.by])))),pch=20,col="black",main=NULL,
-				logy=info$log.obs, #only works in xpose4.04-15
+				logy=info$log.obs, 
 				scales=list(cex=1.5),
 				xlb=list(paste("Time (",info$units$time,")",sep=""),cex=1.5),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep=""),cex=1.5),
 				smooth=info$xsmooth,
 				par.strip.text=list(cex=1.5))
 	}else{
-		plotConcTime <- dv.preds.vs.idv(xpdb,ids=NULL,
+		plotConcTime <- dv.preds.vs.idv(xpdb,
 				subset=paste(xpdb@Prefs@Xvardef$dv,"!=0",sep=""),
 				#aspect=1,
 				pch=20,col="black",main=NULL,aspect="fill",
-				logy=info$log.obs, #only works in xpose4.04-15
+				logy=info$log.obs,
 				scales=list(cex=1.5),
 				xlb=list(paste("Time (",info$units$time,")",sep=""),cex=1.5),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep=""),cex=1.5),
@@ -1205,8 +1204,9 @@ Estimates<-function(info){
 		dev.off()
 
 		printGraph("ParmHist%02d",info$device)
-		parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
+		print(parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
 			main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8)
+		)
 		dev.off()
 
 		printGraph("RanHist",info$device)
@@ -1215,40 +1215,44 @@ Estimates<-function(info){
 		dev.off()
 
 		printGraph("RanHist%02d",info$device)
-		parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
+		print(parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
 			main=NULL,hicol="lightgrey",x.cex=0.8,y.text.cex=0.8)
+		)
 		dev.off()
 	}else{
 		if(length(conts)>1){
 			if(info$smooth){
-				pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
+				print(pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
 					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts]))
+				)
 			}else{
-				pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
+				print(pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
 					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts]))
+				)
 			}
 		}
 
 		if(length(rans)>1){
 			if(info$smooth){
-				pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
+				print(pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
 					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans]))
-
+				)
 			}else{
-				pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
+				print(pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
 					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans]))
+				)
 			}
 		}
 
 		###Histograms
-		parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
-			main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8)
-		parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
-			main=NULL,hicol="lightgrey",x.cex=0.8,y.text.cex=0.8)
+		print(parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
+			main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8))
+		print(parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
+			main=NULL,hicol="lightgrey",x.cex=0.8,y.text.cex=0.8))
 	}
 
 	#Summary of individual parameter estimates

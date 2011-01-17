@@ -17,7 +17,7 @@
 		\item{\code{cat.level}}{Substitute categorical covariates values with text string (e.g. SEX=list(Male='0', Female='1')).}
 		\item{\code{cex}}{Size of symbols (default is 1, 1, 1, 1, 1, 1, 1, 1).}
 		\item{\code{col}}{Colors for symbols (default is 'black', 'red', 'grey', 'blue', 'orange', 'green', 'yellow', 'brown').}
-		\item{\code{cov.rel}}{List of identified parameter-covariate equations to plot (maximum of 1 continuous and 1 categorical covariate per equation).}
+		\item{\code{cov.rel}}{List of identified parameter-covariate equations to plot (maximum of 1 continuous and 1 categorical covariate per equation) (default is NA).}
 		\item{\code{covs}}{List of labels for covariates (default is covariate name in patab/catab).}
 		\item{\code{device}}{Graphical device to print to (options: "wmf", "bmp", "jpg", "pdf", "png", or "tiff") (default is "pdf").}		
 		\item{\code{digits}}{Number of significant digits to be used in tables.}
