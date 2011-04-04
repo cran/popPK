@@ -25,7 +25,7 @@ popPK <- function(info){
 #======================================================================================================================================#
 
 printGraph <- function(name,device,height=7,width=7){
-	if(device=="pdf") pdf(file=paste(name,".pdf",sep=""),height=height,width=width,onefile=FALSE)
+	if(device=="pdf") pdf(file=paste(name,".pdf",sep=""),height=height,width=width)
 	if(device=="wmf") win.metafile(file=paste(name,".wmf",sep=""),height=height,width=width)
 	if(device=="bmp") tiff(filename=paste(name,".bmp",sep=""),width=480/7*width,height=480/7*height)
 	if(device=="tiff") tiff(filename=paste(name,".tif",sep=""),width=480/7*width,height=480/7*height)
@@ -469,21 +469,18 @@ Demographics <-function(info){
 			dev.off()
 
 			printGraph("CovHist%02d",info$device)
-			print(cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
-				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
-			)
+			cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
+				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,,scales=list(cex=1))
 			dev.off()
 
 			printGraph("CatHist",info$device)
-			print(cov.hist(xpdbcat,max.plots.per.page=length(xpdbcat@Prefs@Xvardef$covariates),
+			cov.hist(xpdbcat,max.plots.per.page=length(xpdbcat@Prefs@Xvardef$covariates),
 				main=NULL,hicol="lightgrey",varname.cex=0.7,axis.text.cex=0.7)
-			)
 			dev.off()
 
 			printGraph("CatHist%02d",info$device)
-			print(cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
+			cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
 				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
-			)
 			dev.off()
 		}	
 	}else{
@@ -491,22 +488,19 @@ Demographics <-function(info){
 			if(info$smooth){
 				print(pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
-					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates]))
-				)
+					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates])))
 			}else{
 				print(pairs(xpdbcon@Data[,xpdbcon@Prefs@Xvardef$covariates],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
-					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates]))
-				)
+					labels=as.character(xpdbcon@Prefs@Labels[names(xpdbcon@Prefs@Labels)%in%xpdbcon@Prefs@Xvardef$covariates])))
 			} 
 
 
 			print(cov.hist(xpdbcon,max.plots.per.page=4,#length(xpdbcon@Prefs@Xvardef$covariates),
-				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
-			)
+				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1)))
+
 			print(cov.hist(xpdbcat,max.plots.per.page=4,#length(xpdbcat@Prefs@Xvardef$covariates),
-				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1))
-			)
+				type="density",aspect="fill",main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8,scales=list(cex=1)))
 		}
 	}
 
@@ -646,27 +640,29 @@ Diagnostics <- function(info){
 	if(info$ind.plots==TRUE){
 		if(!is.na(info$output)){
 			printGraph("ind.plots%02d",info$device)
-			print(ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
+			ind.plots(xpdb,main=NULL,
+				aspect="fill",layout=c(3,3),smooth=info$xsmooth,
 				xlb=list(paste("Time (",info$units$time,")",sep="")),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep="")),
-				par.strip.text=list(cex=1.5),
+				par.strip.text=list(cex=1),
 				logy=info$log.obs, 
-				key=list(x=0,y=1.15,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
+				key=list(x=0,y=1.17,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
 						text=list(c("Observations","Population predictions","Individual predictions"),cex=0.8),
-						line=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
-				scales=list(cex=1.5)	
-			))
+						lines=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
+				scales=list(cex=1)
+			)
 			dev.off() 
 		}else{
-			print(ind.plots(xpdb,main=NULL,aspect="fill",layout=c(3,3),smooth=info$xsmooth,
+			print(ind.plots(xpdb,main=NULL,
+				aspect="fill",layout=c(3,3),smooth=info$xsmooth,
 				xlb=list(paste("Time (",info$units$time,")",sep="")),
 				ylb=list(paste(info$drug.name," concentration (",info$units$conc,")",sep="")),
-				par.strip.text=list(cex=1.5),
+				par.strip.text=list(cex=1),
 				logy=info$log.obs, 
-				key=list(x=0,y=1.15,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
+				key=list(x=0,y=1.17,corner=c(0,1),border=FALSE,transparent=TRUE,columns=1,between=1.5,between.columns=5,text.width.multiplier=1,
 						text=list(c("Observations","Population predictions","Individual predictions"),cex=0.8),
-						line=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
-				scales=list(cex=1.5)	
+						lines=list(type=c("p","l","l"),lwd=2,pch=16,col=c("grey","blue","red"),lty=c(1,2,1))),
+				scales=list(cex=1)
 			))
 		}
 	}
@@ -754,7 +750,7 @@ Diagnostics <- function(info){
  			#scales=list(cex=1.5),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			scales=list(cex=1.5,x=list(log=logX,at=atLabelsX,labels=LabelsX),y=list(log=logY,at=atLabelsY,labels=LabelsY)),
 			panel = function(x,y,...) {
 					if(info$log.pred==TRUE & info$log.obs==FALSE){
@@ -808,7 +804,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5,x=list(log=logX,at=atLabelsX,labels=LabelsX),y=list(log=logY,at=atLabelsY,labels=LabelsY)),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),	
+					text = keytext, lines=keyline),	
 			panel = function(x,y,...) {
 					if(info$log.pred==TRUE & info$log.obs==FALSE){
 						panel.curve(expr=10^(x),from=min(x,na.rm=TRUE),to=max(x,na.rm=TRUE),col=1,lwd=2)
@@ -860,7 +856,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			panel = function(x,y,...) {
                               panel.abline(c(0,0),b=0,col=1,lwd=2)
 				      panel.xYplot(x,y,type=c("p"), col=info$col,lty=info$lty,pch=info$pch,cex=info$cex, lwd=info$lwd,...)
@@ -884,7 +880,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5,x=list(log=logX,at=atLabelsX,labels=LabelsX)),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			panel = function(x,y,...) {
 				panel.abline(c(0,0),b=0,col=1,lwd=2)
 			      panel.xYplot(x,y,type=c("p"), col=info$col,lty=info$lty,pch=info$pch,cex=info$cex, lwd=info$lwd,...)
@@ -955,7 +951,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			panel = function(x,y,...) {
                               panel.abline(c(0,0),b=0,col=1,lwd=2)
 				      panel.xYplot(x,y,type=c("p"), col=info$col,lty=info$lty,pch=info$pch,cex=info$cex, lwd=info$lwd,...)
@@ -1012,7 +1008,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			panel = function(x,y,...) {
                               panel.abline(c(0,0),b=0,col=1,lwd=2)
 				      panel.xYplot(x,y,type=c("p"), col=info$col,lty=info$lty,pch=info$pch,cex=info$cex, lwd=info$lwd,...)
@@ -1036,7 +1032,7 @@ Diagnostics <- function(info){
 			scales=list(cex=1.5,x=list(log=logX,at=atLabelsX,labels=LabelsX)),
 			key=list(x=0,y=1.01,corner=c(0,0),border=FALSE,transparent=TRUE,
 					columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-					text = keytext, line=keyline),
+					text = keytext, lines=keyline),
 			panel = function(x,y,...) {
 				panel.abline(c(0,0),b=0,col=1,lwd=2)
 			      panel.xYplot(x,y,type=c("p"), col=info$col,lty=info$lty,pch=info$pch,cex=info$cex, lwd=info$lwd,...)
@@ -1204,9 +1200,8 @@ Estimates<-function(info){
 		dev.off()
 
 		printGraph("ParmHist%02d",info$device)
-		print(parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
+		parm.hist(xpdbcon,max.plots.per.page=4,aspect="fill",
 			main=NULL,hicol="lightgrey",x.cex=0.8,y.cex=0.8)
-		)
 		dev.off()
 
 		printGraph("RanHist",info$device)
@@ -1215,22 +1210,19 @@ Estimates<-function(info){
 		dev.off()
 
 		printGraph("RanHist%02d",info$device)
-		print(parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
+		parm.hist(xpdbran,max.plots.per.page=4,aspect="fill",
 			main=NULL,hicol="lightgrey",x.cex=0.8,y.text.cex=0.8)
-		)
 		dev.off()
 	}else{
 		if(length(conts)>1){
 			if(info$smooth){
 				print(pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
-					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts]))
-				)
+					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts])))
 			}else{
 				print(pairs(xpdb@Data[,conts],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
-					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts]))
-				)
+					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%conts])))
 			}
 		}
 
@@ -1238,13 +1230,12 @@ Estimates<-function(info){
 			if(info$smooth){
 				print(pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,lower.panel=panel.smooth,gap=0,
-					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans]))
-				)
+					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans])))
+
 			}else{
 				print(pairs(xpdb@Data[,rans],pch=20,cex=1,col="black",
 					upper.panel=panel.cor,gap=0,
-					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans]))
-				)
+					labels=as.character(xpdb@Prefs@Labels[names(xpdb@Prefs@Labels)%in%rans])))
 			}
 		}
 
@@ -1664,6 +1655,8 @@ Estimates<-function(info){
 	OmegaEstimates$CI95 <- paste("(",as.character(signif(OmegaEstimates$Estimate-qnorm(0.975)*OmegaEstimates$SE,digits=info$digits)),"-",as.character(signif(OmegaEstimates$Estimate+qnorm(0.975)*OmegaEstimates$SE,digits=info$digits)),")",sep="")
 	OmegaEstimates$Shrinkage <- signif(100*as.numeric(OmegaEstimates$Shrinkage),digits=info$digits)
 	OmegaEstimates$CV <- signif(as.numeric(OmegaEstimates$CV),digits=info$digits)
+
+	assign("OmegaEstimates",OmegaEstimates,envir=.GlobalEnv)
 	
 	OmegaEstimates$Estimate <- as.character(OmegaEstimates$Estimate)
 	OmegaEstimates$SE <- as.character(OmegaEstimates$SE)
@@ -1740,6 +1733,8 @@ Estimates<-function(info){
 	SigmaEstimates$CI95[SigmaEstimates$CI95=="NA" | is.na(SigmaEstimates$CI95)] <- "-"
 
 	SigmaEstimates$CI95[SigmaEstimates$CI95=="(NA-NA)"] <- "-"
+
+	assign("SigmaEstimates",SigmaEstimates,envir=.GlobalEnv)
 
 	#Combine estimates
 	ThetaHeader <- ThetaEstimates[1,]
@@ -2054,7 +2049,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5,x=list(log=10)),
@@ -2077,7 +2072,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5),
@@ -2103,7 +2098,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5),
@@ -2129,7 +2124,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5,x=list(log=10)),
@@ -2154,7 +2149,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5,y=list(log=10)),
@@ -2179,7 +2174,7 @@ Covariates <-function(info){
 							if(!is.na(info$group.by))groups=eval(parse(text=info$group.by)),
 							key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 							xlab=list(xlb,cex=1.5),
        						ylab=list(ylb,cex=1.5),
 							scales=list(cex=1.5,x=list(log=10),y=list(log=10)),
@@ -2318,7 +2313,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5,x=list(log=10)),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2345,7 +2340,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2372,7 +2367,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2399,7 +2394,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5,x=list(log=10)),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2428,7 +2423,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5,y=list(log=10)),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2457,7 +2452,7 @@ Covariates <-function(info){
 										ylab=list(ylb,cex=1.5),
 										key=list(x=0,y=1,corner=c(0,0),border=FALSE,transparent=TRUE,
 											columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-											text = keytext, line=keyline),
+											text = keytext, lines=keyline),
 										scales=list(cex=1.5,x=list(log=10),y=list(log=10)),
 										strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
 										#panel.data=covrel,
@@ -2688,7 +2683,7 @@ Covariates <-function(info){
 								ylim=c((1+0.1+0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.05)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
@@ -2720,7 +2715,7 @@ Covariates <-function(info){
 								ylim=c((1+0.1+0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.1)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
@@ -2752,7 +2747,7 @@ Covariates <-function(info){
 								ylim=c((1-0.1-0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.1)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
@@ -2784,7 +2779,7 @@ Covariates <-function(info){
 								ylim=c((1-0.1-0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.1)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
@@ -2818,7 +2813,7 @@ Covariates <-function(info){
 								ylim=c((1-0.1-0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.1)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
@@ -2851,7 +2846,7 @@ Covariates <-function(info){
 								ylim=c((1-0.1-0.05*yfactor)*min(ExposureResponse$Lower,na.rm=TRUE),(1+0.1)*max(ExposureResponse$Upper,na.rm=TRUE)),
 								key=list(x=0,y=1.0,corner=c(0,0),border=FALSE,transparent=TRUE,
 									columns=ifelse(length(keytext[[1]])%%3==0,length(keytext[[1]])%/%3,length(keytext[[1]])%/%3+1),between=1,between.columns=1,text.width.multiplier=1,
-									text = keytext, line=keyline),
+									text = keytext, lines=keyline),
 								xlab=list(xlb,cex=1.5),
 								ylab=list(ylb,cex=1.5),
                        					strip=function(...) strip.default(..., strip.names=c(FALSE,TRUE), style=1),
